@@ -1,6 +1,6 @@
 package com.task.eCommerce.model;
 
-public abstract class Product {
+public abstract class Product{
     protected int id;
     protected String name;
     protected int quantity;
@@ -52,5 +52,11 @@ public abstract class Product {
         this.price = price;
     }
 
+    public boolean isShippable() {
+        return shippable;
+    }
 
+    public double getWeight() {
+        return weight;
+    }
 }

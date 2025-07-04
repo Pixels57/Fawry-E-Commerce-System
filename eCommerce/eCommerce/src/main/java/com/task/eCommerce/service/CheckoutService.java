@@ -3,7 +3,9 @@ package com.task.eCommerce.service;
 import com.task.eCommerce.model.*;
 import com.task.eCommerce.exceptions.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CheckoutService {
     private ShippingService shippingService;
@@ -25,7 +27,7 @@ public class CheckoutService {
 
         double subtotal = calculateSubtotal(cart);
 
-        List<Shippable> shippableItems = getShippableItems(cart);
+        Map<Shippable, Integer> shippableItems = getShippableItems(cart);
         double shippingFees = shippingService.calculateShippingCost(shippableItems);
 
         double totalAmount = subtotal + shippingFees;
@@ -86,21 +88,17 @@ public class CheckoutService {
                   .sum();
     }
 
-    /**
-     * Get shippable items from cart
-     */
-    private List<Shippable> getShippableItems(Cart cart) {
-        List<Shippable> shippableItems = new ArrayList<>();
+
+    private Map<Shippable, Integer> getShippableItems(Cart cart) {
+        Map<Shippable, Integer> shippableItems = new HashMap<>();
         
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
             
             // Check if product implements Shippable interface
-            if (product instanceof Shippable) {
-                // Add multiple instances based on quantity
-                for (int i = 0; i < item.getQuantity(); i++) {
-                    shippableItems.add((Shippable) product);
-                }
+            if (product.isShippable()) {
+                Shippable shippableProduct = (Shippable) product;
+                shippableItems.put(shippableProduct, item.getQuantity());
             }
         }
         
